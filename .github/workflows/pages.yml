@@ -23,12 +23,48 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Prepare versioned PWA
+        shell: bash
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          rsync -a --exclude '.git' --exclude '.github' --exclude '_site' ./ _site/
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, os, datetime
+
+          index = Path('_site/index.html')
+          html = index.read_text(encoding='utf-8')
+          tag = '<script src="./pwa-runtime.js" defer></script>'
+          if tag not in html:
+              if '</body>' in html:
+                  html = html.replace('</body>', tag + '\n</body>', 1)
+              else:
+                  html += '\n' + tag + '\n'
+          index.write_text(html, encoding='utf-8')
+
+          sha = os.environ.get('GITHUB_SHA', 'unknown')
+          run = os.environ.get('GITHUB_RUN_NUMBER', '0')
+          version = {
+              'version': '5.0.0',
+              'build': f'{sha}-{run}',
+              'sha': sha,
+              'run': run,
+              'channel': 'stable',
+              'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
+          }
+          Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
+          PY
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: .
+          path: _site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
