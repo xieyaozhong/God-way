@@ -1,6 +1,6 @@
-const VERSION='5.3.0';
+const VERSION='5.4.0';
 const CACHE=`god-way-v5-${VERSION}`;
-const PRECACHE=['./','./index.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./pwa-runtime.js','./version.json'];
+const PRECACHE=['./','./index.html','./tarot.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./pwa-runtime.js','./version.json'];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -61,16 +61,17 @@ self.addEventListener('fetch',event=>{
         const preload=await event.preloadResponse;
         if(preload){
           const cache=await caches.open(CACHE);
-          cache.put('./index.html',preload.clone());
+          cache.put(req,preload.clone());
           return preload;
         }
       }catch(e){}
-      return networkFirst(req,'./index.html');
+      const fallback=url.pathname.endsWith('/tarot.html')?'./tarot.html':'./index.html';
+      return networkFirst(req,fallback);
     })());
     return;
   }
 
-  if(/(?:index\.html|manifest\.webmanifest|radar-patch\.js|ritual\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
+  if(/(?:index\.html|tarot\.html|manifest\.webmanifest|radar-patch\.js|ritual\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
     event.respondWith(networkFirst(req,null));
     return;
   }
