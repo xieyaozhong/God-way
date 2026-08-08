@@ -1,6 +1,7 @@
-const VERSION='5.5.0';
+const VERSION='5.5.1';
 const CACHE=`god-way-v5-${VERSION}`;
-const PRECACHE=['./','./index.html','./tarot.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./pwa-runtime.js','./version.json'];
+const TAROT_ASSETS=Array.from({length:22},(_,i)=>`./assets/tarot/${i}.jpg`);
+const PRECACHE=['./','./index.html','./tarot.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./tarot-art-local.js','./pwa-runtime.js','./version.json',...TAROT_ASSETS];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -44,24 +45,10 @@ async function staleWhileRevalidate(request){
   return cached||(await fresh)||Response.error();
 }
 
-async function externalCardCache(request){
-  const cache=await caches.open(CACHE);
-  const cached=await cache.match(request);
-  if(cached)return cached;
-  try{
-    const res=await fetch(request);
-    if(res&&(res.ok||res.type==='opaque'))await cache.put(request,res.clone());
-    return res;
-  }catch(e){return Response.error()}
-}
-
 self.addEventListener('fetch',event=>{
   const req=event.request;
   if(req.method!=='GET')return;
   const url=new URL(req.url);
-
-  const isTarotArt=url.hostname==='raw.githubusercontent.com'&&url.pathname.includes('/yunruse/tarot/gh-pages/cards/color/');
-  if(isTarotArt){event.respondWith(externalCardCache(req));return}
   if(url.origin!==self.location.origin)return;
 
   if(req.mode==='navigate'){
@@ -76,9 +63,15 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
-  if(/(?:index\.html|tarot\.html|manifest\.webmanifest|radar-patch\.js|ritual\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
+  if(url.pathname.includes('/assets/tarot/')){
+    event.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  if(/(?:index\.html|tarot\.html|manifest\.webmanifest|radar-patch\.js|ritual\.js|tarot-art-local\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
     event.respondWith(networkFirst(req,null));return;
   }
+
   event.respondWith(staleWhileRevalidate(req));
 });
 
