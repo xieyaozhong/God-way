@@ -1,7 +1,6 @@
-const VERSION='5.5.1';
+const VERSION='5.5.2';
 const CACHE=`god-way-v5-${VERSION}`;
-const TAROT_ASSETS=Array.from({length:22},(_,i)=>`./assets/tarot/${i}.jpg`);
-const PRECACHE=['./','./index.html','./tarot.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./tarot-art-local.js','./pwa-runtime.js','./version.json',...TAROT_ASSETS];
+const PRECACHE=['./','./index.html','./tarot.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./tarot-art-local.js','./pwa-runtime.js','./version.json'];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -41,30 +40,41 @@ async function networkFirst(request,fallback='./index.html'){
 async function staleWhileRevalidate(request){
   const cache=await caches.open(CACHE);
   const cached=await cache.match(request);
-  const fresh=fetch(request).then(res=>{if(res&&res.ok)cache.put(request,res.clone());return res}).catch(()=>null);
+  const fresh=fetch(request).then(res=>{if(res&&(res.ok||res.type==='opaque'))cache.put(request,res.clone());return res;}).catch(()=>null);
   return cached||(await fresh)||Response.error();
+}
+
+async function externalArtCache(request){
+  const cache=await caches.open(CACHE);
+  const cached=await cache.match(request);
+  if(cached)return cached;
+  try{
+    const res=await fetch(request);
+    if(res&&(res.ok||res.type==='opaque'))await cache.put(request,res.clone());
+    return res;
+  }catch(e){return Response.error();}
 }
 
 self.addEventListener('fetch',event=>{
   const req=event.request;
   if(req.method!=='GET')return;
   const url=new URL(req.url);
+
+  const tarotCommons=(url.hostname==='commons.wikimedia.org'||url.hostname==='en.wikipedia.org'||url.hostname==='upload.wikimedia.org')&&
+    (url.pathname.includes('RWS_Tarot_')||url.pathname.includes('/Special:Redirect/file/'));
+  if(tarotCommons){event.respondWith(externalArtCache(req));return;}
+
   if(url.origin!==self.location.origin)return;
 
   if(req.mode==='navigate'){
     event.respondWith((async()=>{
       try{
         const preload=await event.preloadResponse;
-        if(preload){const cache=await caches.open(CACHE);cache.put(req,preload.clone());return preload}
+        if(preload){const cache=await caches.open(CACHE);cache.put(req,preload.clone());return preload;}
       }catch(e){}
       const fallback=url.pathname.endsWith('/tarot.html')?'./tarot.html':'./index.html';
       return networkFirst(req,fallback);
     })());
-    return;
-  }
-
-  if(url.pathname.includes('/assets/tarot/')){
-    event.respondWith(staleWhileRevalidate(req));
     return;
   }
 
