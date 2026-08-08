@@ -1,14 +1,17 @@
 {
+  "id": "./",
   "name": "神途 GOD WAY｜異常現象調查終端",
   "short_name": "神途",
-  "description": "以麥克風 FFT、動態感測、支援裝置的磁力計、EVP 錄音與 Spirit Box 掃頻模擬組成的現場調查 PWA。",
+  "description": "God Way v5：現場感測、EVP、AM/FM Spirit Box 掃頻、問靈觀測、契約封存與自動更新 PWA。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#04070a",
   "theme_color": "#05090c",
   "lang": "zh-Hant",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icon.svg",
