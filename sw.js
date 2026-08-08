@@ -1,4 +1,4 @@
-const VERSION='5.1.0';
+const VERSION='5.2.0';
 const CACHE=`god-way-v5-${VERSION}`;
 const PRECACHE=['./','./index.html','./manifest.webmanifest','./icon.svg','./ritual.js','./pwa-runtime.js','./version.json'];
 
