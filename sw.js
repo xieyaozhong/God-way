@@ -1,5 +1,87 @@
-const CACHE='god-way-v4';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));self.skipWaiting();});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
-self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response;}).catch(()=>caches.match(event.request).then(x=>x||caches.match('./index.html'))));});
+const VERSION='5.0.0';
+const CACHE=`god-way-v5-${VERSION}`;
+const PRECACHE=['./','./index.html','./manifest.webmanifest','./icon.svg','./pwa-runtime.js','./version.json'];
+
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await Promise.all(PRECACHE.map(async url=>{
+      try{
+        const res=await fetch(new Request(url,{cache:'reload'}));
+        if(res.ok)await cache.put(url,res.clone());
+      }catch(e){}
+    }));
+    await self.skipWaiting();
+  })());
+});
+
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+    if(self.registration.navigationPreload){
+      try{await self.registration.navigationPreload.enable()}catch(e){}
+    }
+    await self.clients.claim();
+    const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    clients.forEach(client=>client.postMessage({type:'PWA_ACTIVATED',version:VERSION}));
+  })());
+});
+
+async function networkFirst(request,fallback='./index.html'){
+  const cache=await caches.open(CACHE);
+  try{
+    const res=await fetch(request,{cache:'no-store'});
+    if(res&&res.ok)await cache.put(request,res.clone());
+    return res;
+  }catch(e){
+    return (await cache.match(request))||(fallback?await cache.match(fallback):undefined)||Response.error();
+  }
+}
+
+async function staleWhileRevalidate(request){
+  const cache=await caches.open(CACHE);
+  const cached=await cache.match(request);
+  const fresh=fetch(request).then(res=>{
+    if(res&&res.ok)cache.put(request,res.clone());
+    return res;
+  }).catch(()=>null);
+  return cached||(await fresh)||Response.error();
+}
+
+self.addEventListener('fetch',event=>{
+  const req=event.request;
+  if(req.method!=='GET')return;
+  const url=new URL(req.url);
+  if(url.origin!==self.location.origin)return;
+
+  if(req.mode==='navigate'){
+    event.respondWith((async()=>{
+      try{
+        const preload=await event.preloadResponse;
+        if(preload){
+          const cache=await caches.open(CACHE);
+          cache.put('./index.html',preload.clone());
+          return preload;
+        }
+      }catch(e){}
+      return networkFirst(req,'./index.html');
+    })());
+    return;
+  }
+
+  if(/(?:index\.html|manifest\.webmanifest|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
+    event.respondWith(networkFirst(req,null));
+    return;
+  }
+
+  event.respondWith(staleWhileRevalidate(req));
+});
+
+self.addEventListener('message',event=>{
+  const data=event.data||{};
+  if(data.type==='SKIP_WAITING')self.skipWaiting();
+  if(data.type==='GET_VERSION'&&event.source){
+    event.source.postMessage({type:'PWA_VERSION',version:VERSION,cache:CACHE});
+  }
+});
