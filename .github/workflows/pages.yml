@@ -52,7 +52,7 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.4.0',
+              'version': '5.5.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -63,7 +63,8 @@ jobs:
                   'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
                   'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
                   'pixel-tarot','tarot-single-card','tarot-three-card-spread','tarot-history',
-                  'auto-update-pwa'
+                  'tarot-cc0-rws-art','tarot-runtime-pixel-render','tarot-pixel-quality-toggle',
+                  'tarot-art-runtime-cache','auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
@@ -77,6 +78,8 @@ jobs:
           node --check _site/ritual.js
           node --check _site/pwa-runtime.js
           node --check _site/sw.js
+          grep -q "yunruse/tarot" _site/tarot.html
+          grep -q "pixel-canvas" _site/tarot.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
