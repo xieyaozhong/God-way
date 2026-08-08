@@ -1,5 +1,6 @@
 (()=>{
-  const RUNTIME='GOD WAY PWA v5';
+  const RUNTIME='GOD WAY PWA v5.1';
+  const DISPLAY_VERSION='v5.1';
   const CHECK_INTERVAL=15*60*1000;
   const IDLE_RELOAD_MS=60*1000;
   let registration=null;
@@ -64,16 +65,17 @@
     const build=String(info.build||info.sha||info.version||'unknown');
     const seen=localStorage.getItem('gw_pwa_build');
     const short=(info.sha||build).slice(0,7);
+    const label=info.version?`v${info.version.replace(/^v/,'')}`:DISPLAY_VERSION;
     if(!seen){
       localStorage.setItem('gw_pwa_build',build);
-      setStatus(`v5 · ${navigator.onLine?'ONLINE':'OFFLINE'} · ${short}`);
+      setStatus(`${label} · ${navigator.onLine?'ONLINE':'OFFLINE'} · ${short}`);
       return;
     }
     if(seen!==build){
       localStorage.setItem('gw_pwa_build',build);
       requestReload('deployment-build-changed');
     }else{
-      setStatus(`v5 · ${navigator.onLine?'ONLINE':'OFFLINE'} · ${short}`);
+      setStatus(`${label} · ${navigator.onLine?'ONLINE':'OFFLINE'} · ${short}`);
     }
   }
 
