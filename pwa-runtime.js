@@ -1,6 +1,6 @@
 (()=>{
-  const RUNTIME='GOD WAY PWA v5.1';
-  const DISPLAY_VERSION='v5.1';
+  const RUNTIME='GOD WAY PWA v5.2';
+  const DISPLAY_VERSION='v5.2';
   const CHECK_INTERVAL=15*60*1000;
   const IDLE_RELOAD_MS=60*1000;
   let registration=null;
