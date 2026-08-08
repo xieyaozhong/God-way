@@ -1,6 +1,6 @@
 (()=>{
-  const RUNTIME='GOD WAY PWA v5.4';
-  const DISPLAY_VERSION='v5.4';
+  const RUNTIME='GOD WAY PWA v5.5';
+  const DISPLAY_VERSION='v5.5';
   const CHECK_INTERVAL=15*60*1000;
   const IDLE_RELOAD_MS=60*1000;
   let registration=null;
@@ -85,17 +85,12 @@
       if(registration)await registration.update();
       await compareBuild();
       if(userInitiated&&!pendingReload)setStatus('已是最新版',true);
-    }catch(e){
-      setStatus('更新檢查失敗');
-    }
+    }catch(e){setStatus('更新檢查失敗')}
   }
 
   async function boot(){
     statusChip();
-    if(!('serviceWorker' in navigator)){
-      setStatus('PWA · 不支援');
-      return;
-    }
+    if(!('serviceWorker' in navigator)){setStatus('PWA · 不支援');return}
     try{
       registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
       if(registration.waiting)registration.waiting.postMessage({type:'SKIP_WAITING'});
@@ -104,15 +99,13 @@
         if(!worker)return;
         setStatus('PWA · 更新下載中',true);
         worker.addEventListener('statechange',()=>{
-          if(worker.state==='installed'&&navigator.serviceWorker.controller){
-            worker.postMessage({type:'SKIP_WAITING'});
-          }
+          if(worker.state==='installed'&&navigator.serviceWorker.controller)worker.postMessage({type:'SKIP_WAITING'});
         });
       });
       navigator.serviceWorker.addEventListener('controllerchange',()=>requestReload('service-worker-controller-changed'));
       await compareBuild();
       await registration.update();
-    }catch(e){setStatus('PWA · 註冊失敗');}
+    }catch(e){setStatus('PWA · 註冊失敗')}
   }
 
   addEventListener('online',()=>{setStatus('PWA · ONLINE',true);checkForUpdates(false)});
@@ -120,15 +113,11 @@
   addEventListener('focus',()=>checkForUpdates(false));
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'){
-      if(pendingReload&&!reloading){reloading=true;location.reload();return;}
+      if(pendingReload&&!reloading){reloading=true;location.reload();return}
       checkForUpdates(false);
     }
   });
   setInterval(()=>checkForUpdates(false),CHECK_INTERVAL);
-  setInterval(()=>{
-    if(pendingReload&&!reloading&&Date.now()-lastInteraction>IDLE_RELOAD_MS){reloading=true;location.reload();}
-  },5000);
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else boot();
+  setInterval(()=>{if(pendingReload&&!reloading&&Date.now()-lastInteraction>IDLE_RELOAD_MS){reloading=true;location.reload()}},5000);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
