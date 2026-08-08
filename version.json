@@ -1,7 +1,22 @@
 {
-  "version": "5.0.0",
-  "build": "source-v5",
+  "version": "5.2.0",
+  "build": "source-v5.2",
   "sha": "source",
   "channel": "stable",
-  "updatedAt": "2026-08-09T00:55:00+08:00"
+  "features": [
+    "field-sensors",
+    "am-fm-sweep",
+    "evp",
+    "question-protocol",
+    "ritual-pact",
+    "summoning-ritual",
+    "ritual-templates",
+    "virtual-altar",
+    "ritual-compass",
+    "ritual-condition-checks",
+    "sensor-reactive-circle",
+    "ritual-to-question-handoff",
+    "auto-update-pwa"
+  ],
+  "updatedAt": "2026-08-09T01:07:00+08:00"
 }
