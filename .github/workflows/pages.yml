@@ -37,6 +37,7 @@ jobs:
           index = Path('_site/index.html')
           html = index.read_text(encoding='utf-8')
           tags = [
+              '<script src="./radar-patch.js" defer></script>',
               '<script src="./ritual.js" defer></script>',
               '<script src="./pwa-runtime.js" defer></script>'
           ]
@@ -51,7 +52,7 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.2.0',
+              'version': '5.3.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -60,6 +61,7 @@ jobs:
                   'field-sensors','am-fm-sweep','evp','question-protocol','ritual-pact',
                   'summoning-ritual','ritual-templates','virtual-altar','ritual-compass',
                   'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
+                  'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
                   'auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -70,6 +72,7 @@ jobs:
       - name: Validate JavaScript
         shell: bash
         run: |
+          node --check _site/radar-patch.js
           node --check _site/ritual.js
           node --check _site/pwa-runtime.js
           node --check _site/sw.js
