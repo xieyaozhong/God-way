@@ -1,7 +1,7 @@
 {
-  "version": "5.5.1",
-  "build": "source-v5.5.1",
-  "sha": "source",
+  "version": "5.5.2",
+  "build": "branch-v5.5.2",
+  "sha": "main",
   "channel": "stable",
   "features": [
     "field-sensors",
@@ -24,13 +24,13 @@
     "tarot-single-card",
     "tarot-three-card-spread",
     "tarot-history",
-    "tarot-cc0-rws-art",
+    "tarot-wikimedia-public-domain-rws",
     "tarot-runtime-pixel-render",
     "tarot-pixel-quality-toggle",
-    "tarot-local-pages-art",
-    "tarot-safari-art-fix",
-    "tarot-offline-art",
+    "tarot-built-in-pixel-fallback",
+    "tarot-branch-pages-compatible",
+    "tarot-external-art-runtime-cache",
     "auto-update-pwa"
   ],
-  "updatedAt": "2026-08-09T01:52:00+08:00"
+  "updatedAt": "2026-08-09T02:39:00+08:00"
 }
