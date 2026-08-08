@@ -36,22 +36,27 @@ jobs:
 
           index = Path('_site/index.html')
           html = index.read_text(encoding='utf-8')
-          tag = '<script src="./pwa-runtime.js" defer></script>'
-          if tag not in html:
-              if '</body>' in html:
-                  html = html.replace('</body>', tag + '\n</body>', 1)
-              else:
-                  html += '\n' + tag + '\n'
+          tags = [
+              '<script src="./ritual.js" defer></script>',
+              '<script src="./pwa-runtime.js" defer></script>'
+          ]
+          for tag in tags:
+              if tag not in html:
+                  if '</body>' in html:
+                      html = html.replace('</body>', tag + '\n</body>', 1)
+                  else:
+                      html += '\n' + tag + '\n'
           index.write_text(html, encoding='utf-8')
 
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.0.0',
+              'version': '5.1.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
               'channel': 'stable',
+              'features': ['field-sensors','am-fm-sweep','evp','question-protocol','ritual-pact','summoning-ritual','auto-update-pwa'],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
           Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
