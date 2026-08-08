@@ -1,12 +1,26 @@
 (()=>{
-  const RUNTIME='GOD WAY PWA v5.5.1';
-  const DISPLAY_VERSION='v5.5.1';
+  const RUNTIME='GOD WAY PWA v5.5.2';
+  const DISPLAY_VERSION='v5.5.2';
   const CHECK_INTERVAL=15*60*1000;
   const IDLE_RELOAD_MS=60*1000;
   let registration=null;
   let pendingReload=false;
   let lastInteraction=Date.now();
   let reloading=false;
+
+  function ensureTarotArtPatch(){
+    if(!/(?:^|\/)tarot\.html$/.test(location.pathname))return;
+    if(document.querySelector('script[data-gw-tarot-art]'))return;
+    const script=document.createElement('script');
+    script.src='./tarot-art-local.js?v=5.5.2';
+    script.async=false;
+    script.dataset.gwTarotArt='5.5.2';
+    script.onload=()=>{
+      try{if(typeof hydrate==='function'&&document.querySelector('.pixel-canvas'))hydrate()}catch(e){}
+    };
+    document.head.appendChild(script);
+  }
+  ensureTarotArtPatch();
 
   ['pointerdown','touchstart','keydown','input'].forEach(type=>{
     addEventListener(type,()=>{lastInteraction=Date.now()},{passive:true});
@@ -85,12 +99,13 @@
       if(registration)await registration.update();
       await compareBuild();
       if(userInitiated&&!pendingReload)setStatus('已是最新版',true);
-    }catch(e){setStatus('更新檢查失敗')}
+    }catch(e){setStatus('更新檢查失敗');}
   }
 
   async function boot(){
     statusChip();
-    if(!('serviceWorker' in navigator)){setStatus('PWA · 不支援');return}
+    ensureTarotArtPatch();
+    if(!('serviceWorker' in navigator)){setStatus('PWA · 不支援');return;}
     try{
       registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
       if(registration.waiting)registration.waiting.postMessage({type:'SKIP_WAITING'});
@@ -105,19 +120,21 @@
       navigator.serviceWorker.addEventListener('controllerchange',()=>requestReload('service-worker-controller-changed'));
       await compareBuild();
       await registration.update();
-    }catch(e){setStatus('PWA · 註冊失敗')}
+    }catch(e){setStatus('PWA · 註冊失敗');}
   }
 
-  addEventListener('online',()=>{setStatus('PWA · ONLINE',true);checkForUpdates(false)});
+  addEventListener('online',()=>{setStatus('PWA · ONLINE',true);checkForUpdates(false);ensureTarotArtPatch();});
   addEventListener('offline',()=>setStatus('PWA · OFFLINE'));
-  addEventListener('focus',()=>checkForUpdates(false));
+  addEventListener('focus',()=>{checkForUpdates(false);ensureTarotArtPatch();});
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'){
-      if(pendingReload&&!reloading){reloading=true;location.reload();return}
+      ensureTarotArtPatch();
+      if(pendingReload&&!reloading){reloading=true;location.reload();return;}
       checkForUpdates(false);
     }
   });
   setInterval(()=>checkForUpdates(false),CHECK_INTERVAL);
-  setInterval(()=>{if(pendingReload&&!reloading&&Date.now()-lastInteraction>IDLE_RELOAD_MS){reloading=true;location.reload()}},5000);
+  setInterval(()=>{if(pendingReload&&!reloading&&Date.now()-lastInteraction>IDLE_RELOAD_MS){reloading=true;location.reload();}},5000);
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
