@@ -49,10 +49,23 @@ jobs:
                       html += '\n' + tag + '\n'
           index.write_text(html, encoding='utf-8')
 
+          tarot = Path('_site/tarot.html')
+          tarot_html = tarot.read_text(encoding='utf-8')
+          tarot_tag = '<script src="./tarot-art-local.js"></script>'
+          if tarot_tag not in tarot_html:
+              runtime_tag = '<script src="./pwa-runtime.js" defer></script>'
+              if runtime_tag in tarot_html:
+                  tarot_html = tarot_html.replace(runtime_tag, tarot_tag + '\n' + runtime_tag, 1)
+              elif '</body>' in tarot_html:
+                  tarot_html = tarot_html.replace('</body>', tarot_tag + '\n</body>', 1)
+              else:
+                  tarot_html += '\n' + tarot_tag + '\n'
+          tarot.write_text(tarot_html, encoding='utf-8')
+
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.5.0',
+              'version': '5.5.1',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -64,22 +77,44 @@ jobs:
                   'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
                   'pixel-tarot','tarot-single-card','tarot-three-card-spread','tarot-history',
                   'tarot-cc0-rws-art','tarot-runtime-pixel-render','tarot-pixel-quality-toggle',
-                  'tarot-art-runtime-cache','auto-update-pwa'
+                  'tarot-local-pages-art','tarot-safari-art-fix','tarot-offline-art','auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
           Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
           PY
 
-      - name: Validate JavaScript
+      - name: Fetch CC0 tarot artwork
+        shell: bash
+        run: |
+          mkdir -p _site/assets/tarot
+          for i in $(seq 0 21); do
+            echo "Fetching Major Arcana $i"
+            curl -LfsS --retry 3 --retry-delay 2 \
+              "https://github.com/yunruse/tarot/raw/refs/heads/gh-pages/cards/color/${i}.jpg" \
+              -o "_site/assets/tarot/${i}.jpg"
+          done
+          python3 - <<'PY'
+          from pathlib import Path
+          for i in range(22):
+              p=Path(f'_site/assets/tarot/{i}.jpg')
+              data=p.read_bytes()
+              assert len(data) > 50000, f'{p} too small: {len(data)} bytes'
+              assert data[:2] == b'\xff\xd8', f'{p} is not a JPEG'
+          print('Validated 22 local tarot JPEG assets')
+          PY
+
+      - name: Validate JavaScript and tarot bundle
         shell: bash
         run: |
           node --check _site/radar-patch.js
           node --check _site/ritual.js
+          node --check _site/tarot-art-local.js
           node --check _site/pwa-runtime.js
           node --check _site/sw.js
-          grep -q "yunruse/tarot" _site/tarot.html
+          grep -q "tarot-art-local.js" _site/tarot.html
           grep -q "pixel-canvas" _site/tarot.html
+          test "$(find _site/assets/tarot -type f -name '*.jpg' | wc -l)" -eq 22
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
