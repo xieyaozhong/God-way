@@ -1,12 +1,13 @@
 {
   "name": "神途 GOD WAY｜請神終端",
   "short_name": "神途",
-  "description": "靈體偵測、問靈與契約封存的娛樂模擬 PWA。",
+  "description": "聲頻 FFT、Spirit Box 模擬掃頻、問靈與契約封存的娛樂模擬 PWA。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#06070b",
-  "theme_color": "#080910",
+  "orientation": "portrait",
+  "background_color": "#05070a",
+  "theme_color": "#07080d",
   "lang": "zh-Hant",
   "icons": [
     {
