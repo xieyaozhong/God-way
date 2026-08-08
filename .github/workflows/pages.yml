@@ -65,7 +65,7 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.5.1',
+              'version': '5.5.2',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -76,32 +76,14 @@ jobs:
                   'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
                   'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
                   'pixel-tarot','tarot-single-card','tarot-three-card-spread','tarot-history',
-                  'tarot-cc0-rws-art','tarot-runtime-pixel-render','tarot-pixel-quality-toggle',
-                  'tarot-local-pages-art','tarot-safari-art-fix','tarot-offline-art','auto-update-pwa'
+                  'tarot-wikimedia-public-domain-rws','tarot-runtime-pixel-render',
+                  'tarot-pixel-quality-toggle','tarot-built-in-pixel-fallback',
+                  'tarot-branch-pages-compatible','tarot-external-art-runtime-cache',
+                  'auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
           Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
-          PY
-
-      - name: Fetch CC0 tarot artwork
-        shell: bash
-        run: |
-          mkdir -p _site/assets/tarot
-          for i in $(seq 0 21); do
-            echo "Fetching Major Arcana $i"
-            curl -LfsS --retry 3 --retry-delay 2 \
-              "https://github.com/yunruse/tarot/raw/refs/heads/gh-pages/cards/color/${i}.jpg" \
-              -o "_site/assets/tarot/${i}.jpg"
-          done
-          python3 - <<'PY'
-          from pathlib import Path
-          for i in range(22):
-              p=Path(f'_site/assets/tarot/{i}.jpg')
-              data=p.read_bytes()
-              assert len(data) > 50000, f'{p} too small: {len(data)} bytes'
-              assert data[:2] == b'\xff\xd8', f'{p} is not a JPEG'
-          print('Validated 22 local tarot JPEG assets')
           PY
 
       - name: Validate JavaScript and tarot bundle
@@ -114,7 +96,7 @@ jobs:
           node --check _site/sw.js
           grep -q "tarot-art-local.js" _site/tarot.html
           grep -q "pixel-canvas" _site/tarot.html
-          test "$(find _site/assets/tarot -type f -name '*.jpg' | wc -l)" -eq 22
+          grep -q "Wikimedia" _site/tarot-art-local.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
