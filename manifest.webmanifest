@@ -1,0 +1,19 @@
+{
+  "name": "神途 GOD WAY｜請神終端",
+  "short_name": "神途",
+  "description": "靈體偵測、問靈與契約封存的娛樂模擬 PWA。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06070b",
+  "theme_color": "#080910",
+  "lang": "zh-Hant",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
