@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#080910" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="神途" />
+  <title>神途 GOD WAY</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <style>
+    :root{
+      --bg:#06070b;--panel:rgba(15,17,25,.78);--line:rgba(196,218,255,.14);
+      --text:#edf2ff;--muted:#8992a8;--gold:#d6b66b;--jade:#68d5b3;--danger:#d86f77;
+      --glow:0 0 28px rgba(104,213,179,.18);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:
+      radial-gradient(circle at 50% -10%,rgba(62,83,108,.22),transparent 32%),
+      radial-gradient(circle at 100% 25%,rgba(55,111,91,.10),transparent 30%),var(--bg);
+      color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Noto Sans TC","PingFang TC",sans-serif}
+    body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;min-height:100vh;padding:18px 16px 100px}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:8px 2px 22px}
+    .brand small{display:block;color:var(--gold);letter-spacing:.32em;font-size:10px;margin-bottom:7px}
+    .brand h1{margin:0;font-size:28px;letter-spacing:.08em;font-weight:650}
+    .brand p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}
+    .seal{width:50px;height:50px;border:1px solid rgba(214,182,107,.45);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:22px;box-shadow:0 0 30px rgba(214,182,107,.1)}
+    .card{background:linear-gradient(180deg,rgba(21,24,34,.85),rgba(10,11,17,.78));border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 22px 70px rgba(0,0,0,.28);backdrop-filter:blur(16px)}
+    .notice{font-size:12px;line-height:1.6;color:#aab2c5;margin-bottom:14px}.notice b{color:#d7deee}
+    .tabs{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(92%,700px);display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:6px;background:rgba(8,9,14,.88);border:1px solid var(--line);border-radius:19px;backdrop-filter:blur(22px);z-index:30}
+    .tab{border:0;background:transparent;color:#727b91;padding:10px 5px;border-radius:14px;font-size:12px}.tab.active{background:rgba(104,213,179,.10);color:#dffcf3}
+    .view{display:none}.view.active{display:block;animation:fade .24s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .radar-wrap{display:grid;place-items:center;padding:14px 0 20px}
+    .radar{position:relative;width:min(70vw,330px);aspect-ratio:1;border-radius:50%;overflow:hidden;border:1px solid rgba(104,213,179,.26);background:
+      linear-gradient(rgba(104,213,179,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(104,213,179,.05) 1px,transparent 1px),radial-gradient(circle,rgba(104,213,179,.08),rgba(4,10,9,.18) 58%,rgba(2,5,5,.55));background-size:24px 24px,24px 24px,100% 100%;box-shadow:inset 0 0 45px rgba(104,213,179,.07),var(--glow)}
+    .radar:before,.radar:after{content:"";position:absolute;inset:50% auto auto 50%;transform:translate(-50%,-50%);border:1px solid rgba(104,213,179,.14);border-radius:50%}.radar:before{width:68%;height:68%}.radar:after{width:35%;height:35%}
+    .cross-h,.cross-v{position:absolute;background:rgba(104,213,179,.13)}.cross-h{height:1px;left:0;right:0;top:50%}.cross-v{width:1px;top:0;bottom:0;left:50%}
+    .beam{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 300deg,rgba(104,213,179,.02) 315deg,rgba(104,213,179,.28) 359deg,transparent 360deg);opacity:0}.scanning .beam{opacity:1;animation:spin 1.7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .pulse{position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;background:var(--jade);transform:translate(-50%,-50%);box-shadow:0 0 20px var(--jade)}
+    .entity-dot{position:absolute;width:12px;height:12px;border:2px solid #d8fff3;border-radius:50%;box-shadow:0 0 22px var(--jade);animation:blink 1.15s infinite alternate}@keyframes blink{to{opacity:.35;transform:scale(.7)}}
+    .scan-label{margin-top:14px;color:var(--muted);font-size:12px;letter-spacing:.08em;text-align:center;min-height:18px}
+    .primary,.ghost,.danger{width:100%;border-radius:15px;padding:14px 16px;border:1px solid transparent;font-weight:650;letter-spacing:.04em}.primary{background:linear-gradient(135deg,#74dfbd,#93e5cf);color:#052018;box-shadow:0 8px 28px rgba(104,213,179,.18)}.ghost{background:rgba(255,255,255,.025);border-color:var(--line);color:#c9d1e4}.danger{background:rgba(216,111,119,.08);border-color:rgba(216,111,119,.24);color:#ffadb3}
+    .primary:disabled,.ghost:disabled{opacity:.42;cursor:not-allowed}
+    .entity{display:none;margin-top:14px}.entity.show{display:block}.entity-head{display:flex;justify-content:space-between;align-items:start;gap:14px}.entity h2{margin:0;font-size:22px}.entity .type{color:var(--gold);font-size:11px;letter-spacing:.16em;margin-bottom:7px}.rank{font-size:11px;padding:7px 9px;border:1px solid rgba(214,182,107,.25);border-radius:999px;color:#e7cd91;white-space:nowrap}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.018)}.stat b{display:block;font-size:18px;margin-bottom:3px}.stat span{color:var(--muted);font-size:10px}
+    .desc{color:#aeb6c9;font-size:13px;line-height:1.7;margin:15px 0}
+    .section-title{font-size:11px;color:var(--gold);letter-spacing:.18em;margin:0 0 12px}
+    textarea,input{width:100%;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.17);color:var(--text);outline:none;padding:13px 14px}textarea{min-height:92px;resize:vertical}input:focus,textarea:focus{border-color:rgba(104,213,179,.4);box-shadow:0 0 0 3px rgba(104,213,179,.06)}
+    .chat{display:flex;flex-direction:column;gap:10px;min-height:220px;max-height:46vh;overflow:auto;padding:4px 2px 12px}.bubble{max-width:88%;padding:11px 13px;border-radius:15px;font-size:13px;line-height:1.65}.me{align-self:flex-end;background:rgba(104,213,179,.10);border:1px solid rgba(104,213,179,.18)}.spirit{align-self:flex-start;background:rgba(214,182,107,.07);border:1px solid rgba(214,182,107,.16);color:#e9dfc7}.system{align-self:center;background:transparent;color:#7b8499;font-size:11px;text-align:center}
+    .row{display:flex;gap:9px}.row>*{flex:1}.gap{height:12px}
+    .contract{font-family:"Noto Serif TC",serif;line-height:1.85;background:rgba(214,182,107,.035);border:1px solid rgba(214,182,107,.17);padding:17px;border-radius:16px;font-size:13px;color:#d9d1bf}.contract strong{color:#f0ddb1}.check{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#9da6ba;line-height:1.55;margin:11px 0}.check input{width:18px;height:18px;margin-top:1px;accent-color:#68d5b3}
+    .history{display:flex;flex-direction:column;gap:10px}.log{border:1px solid var(--line);border-radius:14px;padding:12px 13px;background:rgba(255,255,255,.018)}.log .time{font-size:10px;color:#6e778d;margin-bottom:5px}.log b{font-size:13px}.log p{margin:5px 0 0;font-size:12px;color:#a6afc2;line-height:1.5}
+    .empty{text-align:center;color:#717a90;padding:34px 12px;font-size:12px}.divider{height:1px;background:var(--line);margin:16px 0}.mini{font-size:11px;color:#7d869a;line-height:1.6}.statusbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.chip{font-size:10px;color:#98a1b4;border:1px solid var(--line);border-radius:999px;padding:6px 9px}.chip.on{color:#aef2db;border-color:rgba(104,213,179,.24);background:rgba(104,213,179,.05)}
+    @media(min-width:650px){.app{padding-top:28px}.card{padding:22px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><small>GOD WAY · 神途</small><h1>請神終端</h1><p>異常訊號觀測・問靈介面・契約封存</p></div>
+    <div class="seal">神</div>
+  </header>
+
+  <div class="notice card"><b>娛樂模擬：</b>本 App 以裝置感測資料與隨機演算法營造「靈體偵測」體驗，不能證明或偵測真實超自然存在。請勿依模擬訊息做醫療、法律、財務或危險決定。</div>
+
+  <section id="scan" class="view active">
+    <div class="card">
+      <div class="statusbar"><span id="motionChip" class="chip">動態感測：待命</span><span id="linkChip" class="chip">連線：未建立</span><span class="chip">本機模式</span></div>
+      <div class="radar-wrap">
+        <div id="radar" class="radar"><div class="cross-h"></div><div class="cross-v"></div><div class="beam"></div><div class="pulse"></div></div>
+        <div id="scanLabel" class="scan-label">等待啟動掃描</div>
+      </div>
+      <button id="scanBtn" class="primary">開始偵測附近訊號</button>
+    </div>
+
+    <div id="entityCard" class="entity card">
+      <div class="entity-head"><div><div id="entityType" class="type"></div><h2 id="entityName"></h2></div><div id="entityRank" class="rank"></div></div>
+      <div class="stats"><div class="stat"><b id="power">--</b><span>靈壓</span></div><div class="stat"><b id="distance">--</b><span>模擬距離</span></div><div class="stat"><b id="direction">--</b><span>方位</span></div></div>
+      <p id="entityDesc" class="desc"></p>
+      <div class="row"><button id="connectBtn" class="primary">請求建立連線</button><button id="rescanBtn" class="ghost">重新掃描</button></div>
+    </div>
+  </section>
+
+  <section id="ask" class="view">
+    <div class="card">
+      <p class="section-title">SPIRIT CHANNEL · 問靈</p>
+      <div id="chat" class="chat"><div class="bubble system">尚未建立連線。請先在「探測」頁完成掃描。</div></div>
+      <textarea id="question" placeholder="輸入你想詢問的問題……"></textarea>
+      <div class="gap"></div>
+      <button id="askBtn" class="primary" disabled>送出詢問</button>
+      <div class="gap"></div>
+      <button id="closeLinkBtn" class="danger" disabled>解除連線・封印本次通道</button>
+    </div>
+  </section>
+
+  <section id="contractView" class="view">
+    <div class="card">
+      <p class="section-title">PACT ARCHIVE · 契約</p>
+      <div id="contractNoEntity" class="mini">契約需先與一個偵測到的角色建立連線。</div>
+      <div id="contractForm" style="display:none">
+        <div class="contract" id="contractPreview"></div>
+        <div class="gap"></div>
+        <label class="mini">你的署名</label><input id="signName" maxlength="30" placeholder="輸入署名" />
+        <div class="gap"></div>
+        <label class="mini">契約內容／願望／交換條件</label><textarea id="terms" placeholder="例：在七日內完成指定任務；交換條件僅限遊戲內敘事，不產生現實法律效力。"></textarea>
+        <label class="check"><input id="safeCheck" type="checkbox" /><span>我理解這是一份<b>虛構娛樂契約</b>，不具有法律、宗教或超自然效力。</span></label>
+        <label class="check"><input id="consentCheck" type="checkbox" /><span>我同意契約不得要求傷害自己或他人、犯罪、交付真實財物或其他高風險行動。</span></label>
+        <button id="signBtn" class="primary">簽署並封存契約</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="historyView" class="view">
+    <div class="card"><p class="section-title">ARCHIVE · 紀錄</p><div id="history" class="history"></div><div class="divider"></div><button id="clearBtn" class="ghost">清除本機紀錄</button></div>
+  </section>
+</div>
+
+<nav class="tabs">
+  <button class="tab active" data-view="scan">探測</button><button class="tab" data-view="ask">問靈</button><button class="tab" data-view="contractView">契約</button><button class="tab" data-view="historyView">紀錄</button>
+</nav>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const state={entity:null,linked:false,motion:0,history:JSON.parse(localStorage.getItem('godway-history')||'[]')};
+const names=['玄漓','白衡','赤霄','無咎','晦月','青燈','祈山','離塵','夜渡','星槐','霜言','歸墟'];
+const types=['山川神祇','舊世守望者','無名游靈','星辰使者','界門旅者','古契之靈'];
+const ranks=['微光','幽明','玄階','靈契','上位'];
+const descs=['訊號安定，回應傾向簡短而保守。','訊號帶有週期性波動，似乎正在觀察你。','訊號極淡，但在你靠近裝置時反覆增強。','訊號呈現雙重頻率，對提問可能給出隱喻式回答。','訊號沉靜，似乎只願回答與當下選擇有關的問題。','訊號活躍，對契約與承諾類問題反應明顯。'];
+const answers=[
+  '答案不在遠處。先確認你真正願意承擔的代價。','可以，但不要把「能做到」誤認成「值得去做」。','此刻的訊號偏向否定。換一個角度再問一次。','你已經知道一半答案，只是不願意承認另一半。','時機尚未成熟。若七日後條件仍相同，再作決定。','可行，但需要一個更清楚的界線。','這個問題的核心不是結果，而是你想成為什麼樣的人。','訊號無法給出確定答案。把它當成提醒，而不是命令。','若你必須依靠恐懼才能完成它，那就不是好的契約。','先完成眼前最小的一步，下一個訊號才會出現。'
+];
+const dirs=['北','東北','東','東南','南','西南','西','西北'];
+const save=()=>{localStorage.setItem('godway-history',JSON.stringify(state.history.slice(0,80)));renderHistory();};
+const log=(type,title,text)=>{state.history.unshift({type,title,text,time:new Date().toLocaleString('zh-TW')});save();};
+const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+function beep(freq=260,dur=.09){try{const C=window.AudioContext||window.webkitAudioContext;const c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.08,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur+.02)}catch(e){}}
+function haptic(ms=40){if(navigator.vibrate)navigator.vibrate(ms)}
+function switchView(id){$$('.view').forEach(v=>v.classList.toggle('active',v.id===id));$$('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===id));if(id==='historyView')renderHistory();if(id==='contractView')renderContract();}
+$$('.tab').forEach(t=>t.onclick=()=>switchView(t.dataset.view));
+
+async function enableMotion(){
+  try{
+    if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
+      const r=await DeviceMotionEvent.requestPermission(); if(r!=='granted')return;
+    }
+    window.addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity||{};state.motion=Math.min(20,Math.abs(a.x||0)+Math.abs(a.y||0)+Math.abs(a.z||0));$('#motionChip').textContent='動態感測：啟用';$('#motionChip').classList.add('on')},{passive:true});
+  }catch(e){}
+}
+function generateEntity(){
+  const motionBoost=Math.min(12,Math.round(state.motion));
+  return {name:names[rand(0,names.length-1)],type:types[rand(0,types.length-1)],rank:ranks[rand(0,ranks.length-1)],power:rand(28,88)+motionBoost,distance:(Math.random()*8+.8).toFixed(1)+'m',direction:dirs[rand(0,7)],desc:descs[rand(0,descs.length-1)]};
+}
+function showEntity(e){state.entity=e;$('#entityType').textContent=e.type;$('#entityName').textContent=e.name;$('#entityRank').textContent=e.rank;$('#power').textContent=Math.min(99,e.power);$('#distance').textContent=e.distance;$('#direction').textContent=e.direction;$('#entityDesc').textContent=e.desc;$('#entityCard').classList.add('show');
+  const dot=document.createElement('i');dot.className='entity-dot';dot.style.left=rand(18,80)+'%';dot.style.top=rand(18,80)+'%';$('#radar').appendChild(dot);
+}
+async function scan(){
+  await enableMotion();state.linked=false;$('#linkChip').textContent='連線：未建立';$('#linkChip').classList.remove('on');$('#entityCard').classList.remove('show');$$('.entity-dot').forEach(x=>x.remove());$('#radar').classList.add('scanning');$('#scanBtn').disabled=true;
+  const msgs=['校正環境雜訊…','讀取裝置動態…','掃描異常頻率…','比對未知訊號…','發現可回應目標'];let i=0;$('#scanLabel').textContent=msgs[0];
+  const timer=setInterval(()=>{$('#scanLabel').textContent=msgs[Math.min(++i,msgs.length-1)];beep(210+i*35,.04)},520);
+  setTimeout(()=>{clearInterval(timer);$('#radar').classList.remove('scanning');$('#scanBtn').disabled=false;const e=generateEntity();showEntity(e);haptic([50,30,90]);beep(520,.18);log('scan','偵測到 '+e.name,e.type+' · 靈壓 '+Math.min(99,e.power)+' · '+e.direction+'方 '+e.distance)},2700);
+}
+$('#scanBtn').onclick=scan;$('#rescanBtn').onclick=scan;
+$('#connectBtn').onclick=()=>{if(!state.entity)return;state.linked=true;$('#linkChip').textContent='連線：'+state.entity.name;$('#linkChip').classList.add('on');$('#askBtn').disabled=false;$('#closeLinkBtn').disabled=false;$('#chat').innerHTML=`<div class="bubble system">已建立模擬通道：${state.entity.name}</div><div class="bubble spirit">「通道已開。你可以提問，但不要把我的話當成命令。」</div>`;log('link','建立連線',state.entity.name+' · '+state.entity.type);haptic(80);switchView('ask');};
+$('#askBtn').onclick=()=>{const q=$('#question').value.trim();if(!q||!state.linked)return;const me=document.createElement('div');me.className='bubble me';me.textContent=q;$('#chat').appendChild(me);$('#question').value='';$('#askBtn').disabled=true;const sys=document.createElement('div');sys.className='bubble system';sys.textContent='訊號解析中…';$('#chat').appendChild(sys);$('#chat').scrollTop=$('#chat').scrollHeight;
+  setTimeout(()=>{sys.remove();const a=answers[rand(0,answers.length-1)];const b=document.createElement('div');b.className='bubble spirit';b.textContent='「'+a+'」';$('#chat').appendChild(b);$('#chat').scrollTop=$('#chat').scrollHeight;$('#askBtn').disabled=false;beep(360,.12);log('qa','詢問 '+state.entity.name,q+' → '+a)},900+rand(0,900));};
+function closeLink(){if(!state.linked)return;log('seal','通道已封印',state.entity?state.entity.name:'未知目標');state.linked=false;$('#linkChip').textContent='連線：未建立';$('#linkChip').classList.remove('on');$('#askBtn').disabled=true;$('#closeLinkBtn').disabled=true;const b=document.createElement('div');b.className='bubble system';b.textContent='通道已解除，本次連線封存。';$('#chat').appendChild(b);haptic(60);}
+$('#closeLinkBtn').onclick=closeLink;
+function renderContract(){const ok=!!state.entity;$('#contractNoEntity').style.display=ok?'none':'block';$('#contractForm').style.display=ok?'block':'none';if(!ok)return;$('#contractPreview').innerHTML=`<strong>《神途・模擬靈契》</strong><br><br>甲方：尚待署名<br>乙方：${state.entity.name}（${state.entity.type}）<br><br>雙方以本 App 之虛構敘事模式建立本契約。任何回應、承諾、代價與期限皆屬娛樂內容，不構成現實法律關係、宗教儀式或超自然保證。<br><br>契約序號：GW-${Date.now().toString(36).toUpperCase()}`;}
+$('#signBtn').onclick=()=>{const name=$('#signName').value.trim(),terms=$('#terms').value.trim();if(!name||!terms){alert('請填寫署名與契約內容。');return}if(!$('#safeCheck').checked||!$('#consentCheck').checked){alert('請先確認兩項安全條款。');return}const id='GW-'+Date.now().toString(36).toUpperCase();log('contract','契約 '+id,`${name} × ${state.entity.name}｜${terms}`);beep(620,.18);haptic([70,40,100]);alert('契約已封存於本機紀錄。\n'+id);$('#terms').value='';$('#safeCheck').checked=$('#consentCheck').checked=false;switchView('historyView');};
+function renderHistory(){const box=$('#history');if(!state.history.length){box.innerHTML='<div class="empty">尚無封存紀錄</div>';return}box.innerHTML=state.history.map(x=>`<div class="log"><div class="time">${x.time} · ${x.type.toUpperCase()}</div><b>${escapeHTML(x.title)}</b><p>${escapeHTML(x.text)}</p></div>`).join('');}
+function escapeHTML(s=''){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+$('#clearBtn').onclick=()=>{if(confirm('確定清除所有本機紀錄？')){state.history=[];save()}};
+renderHistory();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
