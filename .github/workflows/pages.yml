@@ -51,16 +51,28 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.1.0',
+              'version': '5.2.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
               'channel': 'stable',
-              'features': ['field-sensors','am-fm-sweep','evp','question-protocol','ritual-pact','summoning-ritual','auto-update-pwa'],
+              'features': [
+                  'field-sensors','am-fm-sweep','evp','question-protocol','ritual-pact',
+                  'summoning-ritual','ritual-templates','virtual-altar','ritual-compass',
+                  'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
+                  'auto-update-pwa'
+              ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
           Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
           PY
+
+      - name: Validate JavaScript
+        shell: bash
+        run: |
+          node --check _site/ritual.js
+          node --check _site/pwa-runtime.js
+          node --check _site/sw.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
