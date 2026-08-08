@@ -1,6 +1,6 @@
-const VERSION='5.0.0';
+const VERSION='5.1.0';
 const CACHE=`god-way-v5-${VERSION}`;
-const PRECACHE=['./','./index.html','./manifest.webmanifest','./icon.svg','./pwa-runtime.js','./version.json'];
+const PRECACHE=['./','./index.html','./manifest.webmanifest','./icon.svg','./ritual.js','./pwa-runtime.js','./version.json'];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -70,7 +70,7 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
-  if(/(?:index\.html|manifest\.webmanifest|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
+  if(/(?:index\.html|manifest\.webmanifest|ritual\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){
     event.respondWith(networkFirst(req,null));
     return;
   }
