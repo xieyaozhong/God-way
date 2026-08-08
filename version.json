@@ -1,6 +1,6 @@
 {
-  "version": "5.4.0",
-  "build": "source-v5.4",
+  "version": "5.5.0",
+  "build": "source-v5.5",
   "sha": "source",
   "channel": "stable",
   "features": [
@@ -24,7 +24,11 @@
     "tarot-single-card",
     "tarot-three-card-spread",
     "tarot-history",
+    "tarot-cc0-rws-art",
+    "tarot-runtime-pixel-render",
+    "tarot-pixel-quality-toggle",
+    "tarot-art-runtime-cache",
     "auto-update-pwa"
   ],
-  "updatedAt": "2026-08-09T01:31:00+08:00"
+  "updatedAt": "2026-08-09T01:36:00+08:00"
 }
