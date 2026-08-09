@@ -65,23 +65,16 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.6.0',
+              'version': '5.7.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
               'channel': 'stable',
               'features': [
                   'field-sensors','am-fm-sweep','evp','question-protocol','ritual-pact',
-                  'summoning-ritual','ritual-templates','virtual-altar','ritual-compass',
-                  'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
-                  'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
-                  'motion-six-axis','motion-xyz-acceleration','motion-alpha-beta-gamma',
-                  'motion-live-waveform','motion-permission-retry','motion-strength-classification',
-                  'pixel-tarot','tarot-single-card','tarot-three-card-spread','tarot-history',
-                  'tarot-wikimedia-public-domain-rws','tarot-runtime-pixel-render',
-                  'tarot-pixel-quality-toggle','tarot-built-in-pixel-fallback',
-                  'tarot-branch-pages-compatible','tarot-external-art-runtime-cache',
-                  'auto-update-pwa'
+                  'summoning-ritual','anomaly-scope','motion-six-axis','motion-live-waveform',
+                  'pixel-tarot','qimen-eight-gates','qimen-nine-palaces','qimen-yin-yang-ju',
+                  'qimen-zhi-shi','qimen-purpose-reading','auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
@@ -100,6 +93,8 @@ jobs:
           grep -q "GODWAY_MOTION_PRO" _site/motion-patch.js
           grep -q "pixel-canvas" _site/tarot.html
           grep -q "Wikimedia" _site/tarot-art-local.js
+          grep -q "QIMEN · EIGHT GATES" _site/qimen.html
+          grep -q "值使" _site/qimen.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
