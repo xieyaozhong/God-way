@@ -65,7 +65,7 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.5.2',
+              'version': '5.6.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -75,6 +75,8 @@ jobs:
                   'summoning-ritual','ritual-templates','virtual-altar','ritual-compass',
                   'ritual-condition-checks','sensor-reactive-circle','ritual-to-question-handoff',
                   'anomaly-scope','device-heading-readout','source-bearing-na','distance-na',
+                  'motion-six-axis','motion-xyz-acceleration','motion-alpha-beta-gamma',
+                  'motion-live-waveform','motion-permission-retry','motion-strength-classification',
                   'pixel-tarot','tarot-single-card','tarot-three-card-spread','tarot-history',
                   'tarot-wikimedia-public-domain-rws','tarot-runtime-pixel-render',
                   'tarot-pixel-quality-toggle','tarot-built-in-pixel-fallback',
@@ -86,15 +88,16 @@ jobs:
           Path('_site/version.json').write_text(json.dumps(version, ensure_ascii=False, indent=2), encoding='utf-8')
           PY
 
-      - name: Validate JavaScript and tarot bundle
+      - name: Validate JavaScript and bundles
         shell: bash
         run: |
           node --check _site/radar-patch.js
           node --check _site/ritual.js
+          node --check _site/motion-patch.js
           node --check _site/tarot-art-local.js
           node --check _site/pwa-runtime.js
           node --check _site/sw.js
-          grep -q "tarot-art-local.js" _site/tarot.html
+          grep -q "GODWAY_MOTION_PRO" _site/motion-patch.js
           grep -q "pixel-canvas" _site/tarot.html
           grep -q "Wikimedia" _site/tarot-art-local.js
 
