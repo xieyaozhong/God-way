@@ -1,6 +1,6 @@
-const VERSION='5.7.0';
+const VERSION='5.7.1';
 const CACHE=`god-way-v5-${VERSION}`;
-const PRECACHE=['./','./index.html','./tarot.html','./qimen.html','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./motion-patch.js','./tarot-art-local.js','./pwa-runtime.js','./version.json'];
+const PRECACHE=['./','./index.html','./tarot.html','./qimen.html','./qimen-core.js','./manifest.webmanifest','./icon.svg','./radar-patch.js','./ritual.js','./motion-patch.js','./tarot-art-local.js','./pwa-runtime.js','./version.json'];
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -24,7 +24,7 @@ self.addEventListener('fetch',event=>{
   if(req.mode==='navigate'){
     event.respondWith((async()=>{try{const preload=await event.preloadResponse;if(preload){const cache=await caches.open(CACHE);cache.put(req,preload.clone());return preload}}catch(e){}const p=url.pathname;const fallback=p.endsWith('/tarot.html')?'./tarot.html':p.endsWith('/qimen.html')?'./qimen.html':'./index.html';return networkFirst(req,fallback)})());return;
   }
-  if(/(?:index\.html|tarot\.html|qimen\.html|manifest\.webmanifest|radar-patch\.js|ritual\.js|motion-patch\.js|tarot-art-local\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){event.respondWith(networkFirst(req,null));return}
+  if(/(?:index\.html|tarot\.html|qimen\.html|qimen-core\.js|manifest\.webmanifest|radar-patch\.js|ritual\.js|motion-patch\.js|tarot-art-local\.js|pwa-runtime\.js|version\.json|sw\.js)$/.test(url.pathname)){event.respondWith(networkFirst(req,null));return}
   event.respondWith(staleWhileRevalidate(req));
 });
 self.addEventListener('message',event=>{const data=event.data||{};if(data.type==='SKIP_WAITING')self.skipWaiting();if(data.type==='GET_VERSION'&&event.source)event.source.postMessage({type:'PWA_VERSION',version:VERSION,cache:CACHE})});
