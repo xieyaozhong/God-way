@@ -1,6 +1,6 @@
 {
-  "version": "5.7.0",
-  "build": "branch-v5.7.0",
+  "version": "5.7.1",
+  "build": "branch-v5.7.1",
   "sha": "main",
   "channel": "stable",
   "features": [
@@ -14,12 +14,20 @@
     "motion-six-axis",
     "motion-live-waveform",
     "pixel-tarot",
-    "qimen-eight-gates",
+    "qimen-dunjia",
     "qimen-nine-palaces",
+    "qimen-sanqi-liuyi",
+    "qimen-heaven-earth-stems",
+    "qimen-nine-stars",
+    "qimen-eight-gates",
+    "qimen-eight-deities",
     "qimen-yin-yang-ju",
+    "qimen-zhi-fu",
     "qimen-zhi-shi",
-    "qimen-purpose-reading",
+    "qimen-kong-wang",
+    "qimen-yi-ma",
+    "qimen-purpose-focus",
     "auto-update-pwa"
   ],
-  "updatedAt": "2026-08-09T10:08:00+08:00"
+  "updatedAt": "2026-08-09T10:14:00+08:00"
 }
