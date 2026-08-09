@@ -1,6 +1,6 @@
 {
-  "version": "5.7.1",
-  "build": "branch-v5.7.1",
+  "version": "5.8.0",
+  "build": "branch-v5.8.0",
   "sha": "main",
   "channel": "stable",
   "features": [
@@ -27,7 +27,16 @@
     "qimen-kong-wang",
     "qimen-yi-ma",
     "qimen-purpose-focus",
+    "ziwei-doushu",
+    "ziwei-twelve-palaces",
+    "ziwei-fourteen-major-stars",
+    "ziwei-mutagens",
+    "ziwei-major-minor-stars",
+    "ziwei-five-elements-class",
+    "ziwei-soul-body-palaces",
+    "ziwei-decadal-stage",
+    "ziwei-solar-lunar-input",
     "auto-update-pwa"
   ],
-  "updatedAt": "2026-08-09T10:14:00+08:00"
+  "updatedAt": "2026-08-09T10:26:00+08:00"
 }
