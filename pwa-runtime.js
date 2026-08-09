@@ -1,6 +1,6 @@
 (()=>{
-  const RUNTIME='GOD WAY PWA v5.6.0';
-  const DISPLAY_VERSION='v5.6.0';
+  const RUNTIME='GOD WAY PWA v5.7.1';
+  const DISPLAY_VERSION='v5.7.1';
   const CHECK_INTERVAL=15*60*1000;
   const IDLE_RELOAD_MS=60*1000;
   let registration=null;
@@ -17,13 +17,15 @@
   }
 
   function ensurePagePatches(){
-    if(/(?:^|\/)tarot\.html$/.test(location.pathname)){
-      ensureScript('./tarot-art-local.js?v=5.6.0','data-gw-tarot-art','5.6.0',()=>{
+    const path=location.pathname;
+    if(/(?:^|\/)tarot\.html$/.test(path)){
+      ensureScript('./tarot-art-local.js?v=5.7.1','data-gw-tarot-art','5.7.1',()=>{
         try{if(typeof hydrate==='function'&&document.querySelector('.pixel-canvas'))hydrate()}catch(e){}
       });
       return;
     }
-    ensureScript('./motion-patch.js?v=5.6.0','data-gw-motion-pro','5.6.0');
+    if(/(?:^|\/)qimen\.html$/.test(path))return;
+    ensureScript('./motion-patch.js?v=5.7.1','data-gw-motion-pro','5.7.1');
   }
   ensurePagePatches();
 
