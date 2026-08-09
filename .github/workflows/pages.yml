@@ -65,7 +65,7 @@ jobs:
           sha = os.environ.get('GITHUB_SHA', 'unknown')
           run = os.environ.get('GITHUB_RUN_NUMBER', '0')
           version = {
-              'version': '5.7.1',
+              'version': '5.8.0',
               'build': f'{sha}-{run}',
               'sha': sha,
               'run': run,
@@ -76,7 +76,11 @@ jobs:
                   'pixel-tarot','qimen-dunjia','qimen-nine-palaces','qimen-sanqi-liuyi',
                   'qimen-heaven-earth-stems','qimen-nine-stars','qimen-eight-gates',
                   'qimen-eight-deities','qimen-yin-yang-ju','qimen-zhi-fu','qimen-zhi-shi',
-                  'qimen-kong-wang','qimen-yi-ma','qimen-purpose-focus','auto-update-pwa'
+                  'qimen-kong-wang','qimen-yi-ma','qimen-purpose-focus',
+                  'ziwei-doushu','ziwei-twelve-palaces','ziwei-fourteen-major-stars',
+                  'ziwei-mutagens','ziwei-major-minor-stars','ziwei-five-elements-class',
+                  'ziwei-soul-body-palaces','ziwei-decadal-stage','ziwei-solar-lunar-input',
+                  'auto-update-pwa'
               ],
               'updatedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()
           }
@@ -99,6 +103,9 @@ jobs:
           grep -q "QIMEN DUNJIA" _site/qimen.html
           grep -q "三奇六儀" _site/qimen.html
           grep -q "qimen-core.js" _site/qimen.html
+          grep -q "紫微斗數" _site/ziwei.html
+          grep -q "iztro@2.5.8" _site/ziwei.html
+          grep -q "十二宮" _site/ziwei.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
