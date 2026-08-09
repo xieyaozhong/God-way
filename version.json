@@ -1,6 +1,6 @@
 {
-  "version": "5.5.2",
-  "build": "branch-v5.5.2",
+  "version": "5.6.0",
+  "build": "branch-v5.6.0",
   "sha": "main",
   "channel": "stable",
   "features": [
@@ -20,6 +20,12 @@
     "device-heading-readout",
     "source-bearing-na",
     "distance-na",
+    "motion-six-axis",
+    "motion-xyz-acceleration",
+    "motion-alpha-beta-gamma",
+    "motion-live-waveform",
+    "motion-permission-retry",
+    "motion-strength-classification",
     "pixel-tarot",
     "tarot-single-card",
     "tarot-three-card-spread",
@@ -32,5 +38,5 @@
     "tarot-external-art-runtime-cache",
     "auto-update-pwa"
   ],
-  "updatedAt": "2026-08-09T02:39:00+08:00"
+  "updatedAt": "2026-08-09T10:04:00+08:00"
 }
